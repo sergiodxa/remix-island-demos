@@ -2,21 +2,47 @@ import { Pricing, queryPricing } from "~/components/pricing";
 import type { Product } from "~/types/product";
 import { ProductRating } from "~/components/product-rating";
 import { serverOnly$ } from "vite-env-only/macros";
+import { AppLoadContext } from "@remix-run/cloudflare";
 
 export const querySingleProduct = serverOnly$(
-  async (requestHeaders: Headers, responseHeaders: Headers) => {
+  async (
+    requestHeaders: Headers,
+    responseHeaders: Headers,
+    context: AppLoadContext
+  ) => {
     const pricing = queryPricing!(requestHeaders, "1");
+
+    let product = await context.cloudflare.env.KV.get<Product>(
+      "product:1",
+      "json"
+    );
+
+    if (product) {
+      responseHeaders.append(
+        "Link",
+        `</${product.image}>; rel=prefetch; as=image`
+      );
+      return { product, pricing };
+    }
 
     const response = await fetch(
       `https://app-router-api.vercel.app/api/products?id=1`,
       { cf: { cacheTtl: 60 * 60, cacheEverything: true } }
     );
 
-    const product: Product = await response.json();
+    product = await response.json();
+
+    if (!product) throw new Error("Somehow it failed to load the product");
 
     responseHeaders.append(
       "Link",
       `</${product.image}>; rel=prefetch; as=image`
+    );
+
+    context.cloudflare.ctx.waitUntil(
+      context.cloudflare.env.KV.put("product:1", JSON.stringify(product), {
+        expirationTtl: 60 * 60,
+      })
     );
 
     return { product, pricing };
