@@ -12,6 +12,7 @@ export const querySingleProduct = serverOnly$(async (headers: Headers) => {
   );
 
   const product: Product = await response.json();
+  headers.append("Link", `</${product.image}>; rel=prefetch; as=image`);
 
   return { product, pricing };
 });
@@ -27,6 +28,8 @@ export function SingleProduct({ product, pricing }: Props) {
       <div className="col-span-2 md:order-1 md:col-span-1">
         <div className="space-y-2">
           <div className="relative aspect-square">
+            <link rel="prefetch" as="image" href={`/${product.image}`} />
+
             <img
               src={`/${product.image}`}
               className="block rounded-lg grayscale"
