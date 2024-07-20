@@ -11,8 +11,12 @@ import {
   unstable_defineAction,
   unstable_defineLoader,
 } from "@remix-run/cloudflare";
-import { Await, useLoaderData } from "@remix-run/react";
+import { Await, MetaFunction, useLoaderData } from "@remix-run/react";
 import { cartCountCookie } from "~/cookies.server";
+
+export const meta: MetaFunction = () => {
+  return [{ title: "Remix + Single Fetch Demo" }];
+};
 
 export const loader = unstable_defineLoader(
   async ({ request, response, context }) => {
