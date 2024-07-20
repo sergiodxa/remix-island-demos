@@ -1,41 +1,67 @@
-import type { MetaFunction } from "@remix-run/cloudflare";
+import { Suspense } from "react";
+import {
+  queryRecommendedProducts,
+  RecommendedProducts,
+  RecommendedProductsSkeleton,
+} from "~/components/recommended-products";
+import { queryReviews, Reviews, ReviewsSkeleton } from "~/components/reviews";
+import { querySingleProduct, SingleProduct } from "~/components/single-product";
+import { Ping } from "~/components/ping";
+import {
+  unstable_defineAction,
+  unstable_defineLoader,
+} from "@remix-run/cloudflare";
+import { Await, useLoaderData } from "@remix-run/react";
+import { cartCountCookie } from "~/cookies.server";
 
-export const meta: MetaFunction = () => {
-  return [
-    { title: "New Remix App" },
-    {
-      name: "description",
-      content: "Welcome to Remix on Cloudflare!",
-    },
-  ];
-};
+export const loader = unstable_defineLoader(async ({ request }) => {
+  const recommendedProducts = queryRecommendedProducts!();
+  const reviews = queryReviews!();
 
-export default function Index() {
+  const { product, pricing } = await querySingleProduct!(request.headers);
+
+  return { product, pricing, recommendedProducts, reviews };
+});
+
+export const action = unstable_defineAction(async ({ request, response }) => {
+  const formData = await request.formData();
+  const cartCount = Number(formData.get("cartCount"));
+  response.headers.append(
+    "set-cookie",
+    await cartCountCookie.serialize(cartCount, {
+      maxAge: 60 * 60 * 24 * 30,
+    })
+  );
+  return null;
+});
+
+export default function Page() {
+  const loaderData = useLoaderData<typeof loader>();
+
   return (
-    <div className="font-sans p-4">
-      <h1 className="text-3xl">Welcome to Remix on Cloudflare</h1>
-      <ul className="list-disc mt-4 pl-6 space-y-2">
-        <li>
-          <a
-            className="text-blue-700 underline visited:text-purple-900"
-            target="_blank"
-            href="https://remix.run/docs"
-            rel="noreferrer"
-          >
-            Remix Docs
-          </a>
-        </li>
-        <li>
-          <a
-            className="text-blue-700 underline visited:text-purple-900"
-            target="_blank"
-            href="https://developers.cloudflare.com/pages/framework-guides/deploy-a-remix-site/"
-            rel="noreferrer"
-          >
-            Cloudflare Pages Docs - Remix guide
-          </a>
-        </li>
-      </ul>
+    <div className="space-y-8 lg:space-y-14">
+      <SingleProduct
+        product={loaderData.product}
+        pricing={loaderData.pricing}
+      />
+
+      <Ping />
+
+      <Suspense fallback={<RecommendedProductsSkeleton />}>
+        <Await resolve={loaderData.recommendedProducts}>
+          {(recommendedProducts) => (
+            <RecommendedProducts products={recommendedProducts} />
+          )}
+        </Await>
+      </Suspense>
+
+      <Ping />
+
+      <Suspense fallback={<ReviewsSkeleton />}>
+        <Await resolve={loaderData.reviews}>
+          {(reviews) => <Reviews reviews={reviews} />}
+        </Await>
+      </Suspense>
     </div>
   );
 }
