@@ -8,12 +8,7 @@ export const queryReviews = serverOnly$(async () => {
     fetch(
       // We intentionally delay the response to simulate a slow data
       // request that would benefit from streaming
-      `https://app-router-api.vercel.app/api/reviews`,
-      {
-        // We intentionally disable Next.js Cache to better demo
-        // streaming
-        cache: "no-store",
-      }
+      `https://app-router-api.vercel.app/api/reviews`
     ).then((res) => res.json()),
     delayReviews
   );
