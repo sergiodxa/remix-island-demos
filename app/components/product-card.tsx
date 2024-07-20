@@ -24,6 +24,7 @@ export function ProductCard({ product }: { product: Product }) {
             sizes="(min-width: 1184px) 200px, (min-width: 1024px) 20vw, (min-width: 768px) 25vw, 50vw"
             className="rounded-xl grayscale group-hover:opacity-80"
             alt={product.name}
+            loading="lazy"
           />
         </div>
 

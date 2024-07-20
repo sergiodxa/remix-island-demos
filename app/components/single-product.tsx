@@ -77,7 +77,6 @@ export function SingleProduct({ product, pricing }: Props) {
                 className="rounded-lg grayscale"
                 alt={product.name}
                 sizes="(min-width: 1184px) 75px, (min-width: 768px) 8.33vw, 16.66vw"
-                loading="lazy"
               />
             </div>
             <div className="relative aspect-square w-1/3">
@@ -86,7 +85,6 @@ export function SingleProduct({ product, pricing }: Props) {
                 className="rounded-lg grayscale"
                 alt={product.name}
                 sizes="(min-width: 1184px) 75px, (min-width: 768px) 8.33vw, 16.66vw"
-                loading="lazy"
               />
             </div>
             <div className="relative aspect-square w-1/3">
@@ -95,7 +93,6 @@ export function SingleProduct({ product, pricing }: Props) {
                 className="rounded-lg grayscale"
                 alt={product.name}
                 sizes="(min-width: 1184px) 75px, (min-width: 768px) 8.33vw, 16.66vw"
-                loading="lazy"
               />
             </div>
           </div>
