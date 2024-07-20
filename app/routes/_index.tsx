@@ -13,6 +13,7 @@ import {
 } from "@remix-run/cloudflare";
 import { Await, MetaFunction, useLoaderData } from "@remix-run/react";
 import { cartCountCookie } from "~/cookies.server";
+import { createCache } from "~/lib/cache";
 
 export const meta: MetaFunction = () => {
   return [{ title: "Remix + Single Fetch Demo" }];
@@ -20,13 +21,17 @@ export const meta: MetaFunction = () => {
 
 export const loader = unstable_defineLoader(
   async ({ request, response, context }) => {
-    const recommendedProducts = queryRecommendedProducts!();
-    const reviews = queryReviews!();
+    const cache = createCache(context);
+    const recommendedProducts = cache.fetch(
+      "recommendedProducts",
+      queryRecommendedProducts!
+    );
+    const reviews = cache.fetch("reviews", queryReviews!);
 
     const { product, pricing } = await querySingleProduct!(
       request.headers,
       response.headers,
-      context
+      cache
     );
 
     return { product, pricing, recommendedProducts, reviews };
