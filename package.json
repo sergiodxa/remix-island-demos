@@ -21,8 +21,8 @@
     "date-fns": "^3.6.0",
     "dinero.js": "2.0.0-alpha.8",
     "isbot": "^4.1.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
+    "react": "npm:react@rc",
+    "react-dom": "npm:react-dom@rc",
     "vite-env-only": "^3.0.3"
   },
   "devDependencies": {
@@ -30,8 +30,8 @@
     "@remix-run/dev": "^2.10.3",
     "@tailwindcss/forms": "^0.5.7",
     "@tailwindcss/typography": "^0.5.13",
-    "@types/react": "^18.2.20",
-    "@types/react-dom": "^18.2.7",
+    "@types/react": "npm:types-react@rc",
+    "@types/react-dom": "npm:types-react-dom@rc",
     "@typescript-eslint/eslint-plugin": "^6.7.4",
     "@typescript-eslint/parser": "^6.7.4",
     "autoprefixer": "^10.4.19",
@@ -47,6 +47,12 @@
     "vite": "^5.1.0",
     "vite-tsconfig-paths": "^4.2.1",
     "wrangler": "3.57.1"
+  },
+  "overrides": {
+    "react": "npm:react@rc",
+    "react-dom": "npm:react-dom@rc",
+    "@types/react": "npm:types-react@rc",
+    "@types/react-dom": "npm:types-react-dom@rc"
   },
   "engines": {
     "node": ">=20.0.0"
