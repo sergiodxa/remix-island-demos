@@ -3,19 +3,25 @@ import type { Product } from "~/types/product";
 import { ProductRating } from "~/components/product-rating";
 import { serverOnly$ } from "vite-env-only/macros";
 
-export const querySingleProduct = serverOnly$(async (headers: Headers) => {
-  const pricing = queryPricing!(headers, "1");
+export const querySingleProduct = serverOnly$(
+  async (requestHeaders: Headers, responseHeaders: Headers) => {
+    const pricing = queryPricing!(requestHeaders, "1");
 
-  const response = await fetch(
-    `https://app-router-api.vercel.app/api/products?id=1`,
-    { cf: { cacheTtl: 60 * 60, cacheEverything: true } }
-  );
+    const response = await fetch(
+      `https://app-router-api.vercel.app/api/products?id=1`,
+      { cf: { cacheTtl: 60 * 60, cacheEverything: true } }
+    );
 
-  const product: Product = await response.json();
-  headers.append("Link", `</${product.image}>; rel=prefetch; as=image`);
+    const product: Product = await response.json();
 
-  return { product, pricing };
-});
+    responseHeaders.append(
+      "Link",
+      `</${product.image}>; rel=prefetch; as=image`
+    );
+
+    return { product, pricing };
+  }
+);
 
 type Props = {
   product: Product;

@@ -14,11 +14,14 @@ import {
 import { Await, useLoaderData } from "@remix-run/react";
 import { cartCountCookie } from "~/cookies.server";
 
-export const loader = unstable_defineLoader(async ({ request }) => {
+export const loader = unstable_defineLoader(async ({ request, response }) => {
   const recommendedProducts = queryRecommendedProducts!();
   const reviews = queryReviews!();
 
-  const { product, pricing } = await querySingleProduct!(request.headers);
+  const { product, pricing } = await querySingleProduct!(
+    request.headers,
+    response.headers
+  );
 
   return { product, pricing, recommendedProducts, reviews };
 });
