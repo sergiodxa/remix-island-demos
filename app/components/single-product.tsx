@@ -6,9 +6,12 @@ import { serverOnly$ } from "vite-env-only/macros";
 export const querySingleProduct = serverOnly$(async (headers: Headers) => {
   const pricing = queryPricing!(headers, "1");
 
-  const product: Product = await fetch(
-    `https://app-router-api.vercel.app/api/products?id=1`
-  ).then((res) => res.json());
+  const response = await fetch(
+    `https://app-router-api.vercel.app/api/products?id=1`,
+    { cf: { cacheTtl: 60 * 60, cacheEverything: true } }
+  );
+
+  const product: Product = await response.json();
 
   return { product, pricing };
 });
