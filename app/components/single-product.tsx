@@ -36,7 +36,7 @@ export const querySingleProduct = serverOnly$(
 
     responseHeaders.append(
       "Link",
-      `</${product.image}>; rel=prefetch; as=image`
+      `</${product.image}>; rel=preload; as=image`
     );
 
     context.cloudflare.ctx.waitUntil(
@@ -60,7 +60,7 @@ export function SingleProduct({ product, pricing }: Props) {
       <div className="col-span-2 md:order-1 md:col-span-1">
         <div className="space-y-2">
           <div className="relative aspect-square">
-            <link rel="prefetch" as="image" href={`/${product.image}`} />
+            <link rel="preload" as="image" href={`/${product.image}`} />
 
             <img
               src={`/${product.image}`}
