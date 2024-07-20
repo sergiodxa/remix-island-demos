@@ -6,11 +6,16 @@ import {
   ScrollRestoration,
   useRouteLoaderData,
 } from "@remix-run/react";
-import "./tailwind.css";
+import tailwind from "./tailwind.css";
 import { Sidebar } from "./components/sidebar";
 import { CartCountProvider } from "./components/cart-count-context";
 import { Header, queryInitialCardCount } from "./components/header";
-import { unstable_defineLoader } from "@remix-run/cloudflare";
+import { LinksFunction, unstable_defineLoader } from "@remix-run/cloudflare";
+
+export const links: LinksFunction = () => [
+  { rel: "preload", href: tailwind, as: "style" },
+  { rel: "stylesheet", href: tailwind },
+];
 
 export const loader = unstable_defineLoader(async ({ request }) => {
   const initialCartCount = await queryInitialCardCount!(request.headers);
